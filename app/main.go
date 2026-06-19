@@ -81,7 +81,7 @@ func main() {
 						   fullPath:=filepath.Join(dir,parts[1])
 
 							if isExecutable(fullPath){
-								  fmt.Printf("%s is %s\n",parts[0],fullPath)
+								  fmt.Printf("%s is %s\n",parts[1],fullPath)
 								  return
 							}
 
