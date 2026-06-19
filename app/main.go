@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -11,16 +13,21 @@ func main() {
 
 	for{
 
-		var userInput string
+		
 	
 		fmt.Print("$ ");
 
 		
 	
-		fmt.Scan(&userInput)
+		reader:=bufio.NewReader(os.Stdin)
      
-		 
+		userInput,_:=reader.ReadString('\n')
+
+		userInput=strings.TrimSpace(userInput)
+	   
+
 		parts:=strings.SplitN(userInput," ",2)
+		
       command:=parts[0]
 		if command=="exit"{
 			 break
