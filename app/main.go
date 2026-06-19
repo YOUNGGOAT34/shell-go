@@ -60,12 +60,6 @@ func main() {
 		
       command:=parts[0]
 
-		
-
-		
-
-
-
 
 		if command=="exit"{
 			 break
@@ -77,16 +71,22 @@ func main() {
 			  }else{
 				    pathEnv:=os.Getenv("PATH");
 					 dirs:=filepath.SplitList(pathEnv)
+					 found:=false
 					 for _,dir :=range dirs{
 						   fullPath:=filepath.Join(dir,parts[1])
 
 							if isExecutable(fullPath){
 								  fmt.Printf("%s is %s\n",parts[1],fullPath)
-								  return
+								  found=true
+								  
 							}
 
 					 }
-				   fmt.Printf("%s: not found\n",parts[1])
+
+					 if found{
+
+						 fmt.Printf("%s: not found\n",parts[1])
+					 }
 			  }
 		}else{
 
