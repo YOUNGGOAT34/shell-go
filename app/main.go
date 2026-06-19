@@ -49,7 +49,7 @@ func main() {
            if isInbuilt(parts[1]){
 				  fmt.Printf("%s is a shell builtin\n",parts[1]);
 			  }else{
-				   fmt.Printf("%s: not found\n",userInput)
+				   fmt.Printf("%s: not found\n",parts[1])
 			  }
 		}else{
 
