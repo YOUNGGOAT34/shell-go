@@ -83,7 +83,7 @@ func main() {
 
 					 }
 
-					 if found{
+					 if !found{
 
 						 fmt.Printf("%s: not found\n",parts[1])
 					 }
