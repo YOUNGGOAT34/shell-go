@@ -5,9 +5,13 @@ import (
 )
 
 
-var _ = fmt.Print
 
 func main() {
+
+	var userInput string
+
+	fmt.Scan(&userInput)
+
 	
-	fmt.Print("$ ")
+	fmt.Printf("$ %s: command not found",userInput)
 }
