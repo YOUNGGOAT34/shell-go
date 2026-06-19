@@ -10,7 +10,7 @@ func main() {
 
 	var userInput string
 
-	fmt.Print("$");
+	fmt.Print("$ ");
 
 	fmt.Scan(&userInput)
 
