@@ -9,6 +9,18 @@ import (
 
 
 
+func isInbuilt(command string) bool{
+	    inbuilts:=[]string{"exit","type","echo"}
+	   for _,cmd :=range inbuilts{
+            if cmd==command{
+					return true
+				}
+		}
+
+		return false
+}
+
+
 func main() {
 
 	for{
@@ -33,6 +45,12 @@ func main() {
 			 break
 		}else if command=="echo"{
 			 fmt.Printf("%s\n",parts[1]);
+		}else if command=="type"{
+           if isInbuilt(parts[1]){
+				  fmt.Printf("%s is a shell builtin\n",parts[1]);
+			  }else{
+				   fmt.Printf("%s: not found\n",userInput)
+			  }
 		}else{
 
 			fmt.Printf("%s: command not found\n",userInput)
