@@ -20,6 +20,18 @@ func printWorkingDirectory(){
 
 
 func changeDirectory(path string){
+	    if path =="~"{
+			 home:=os.Getenv("HOME")
+
+			 if home==""{
+				 fmt.Println("Home is not set")
+				 return
+			 }
+          
+			 os.Chdir(home)
+
+			 return
+		 }
 	    err:=os.Chdir(path)
 
 		 if err!=nil{
