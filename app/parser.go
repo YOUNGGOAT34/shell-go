@@ -24,7 +24,7 @@ func parseUserInput(userInput string) []string{
 					 continue
 				 }
 
-				 if char=='\''{
+				 if char=='\'' && !inDoubleQuotes{
 					  
 					  inSingleQuotes=!inSingleQuotes
 					  continue
