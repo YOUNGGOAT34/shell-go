@@ -20,5 +20,9 @@ func printWorkingDirectory(){
 
 
 func changeDirectory(path string){
-	    os.Chdir(path)
+	    err:=os.Chdir(path)
+
+		 if err!=nil{
+			   fmt.Printf("cd: %s: No such file or directory\n",path)
+		 }
 }
