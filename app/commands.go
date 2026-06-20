@@ -4,6 +4,7 @@ import (
 	 "strings"
 	 "os"
 	 "path/filepath"
+	 "os/exec"
 )
 
 
@@ -12,13 +13,8 @@ func isInbuilt(command string) bool{
 	    inbuilts:=map[string] bool{
 			"exit":true,"type":true,"echo":true,
 		}
-	   
-
 		return inbuilts[command]
 }
-
-
-
 
 func execute(userInput string) bool{
 	  
@@ -37,12 +33,13 @@ func execute(userInput string) bool{
 								fmt.Printf("%s is a shell builtin\n",parts[1]);
 							}else{
 
-									handleType(parts)
-									
+									handleType(parts)		
 							}
 				default:
+					if !runProgram(userInput){
 
-					fmt.Printf("%s: command not found\n",userInput)
+						fmt.Printf("%s: command not found\n",userInput)
+					}
 				}
 
 
@@ -82,4 +79,22 @@ func handleType(parts []string){
 						 fmt.Printf("%s: not found\n",parts[1])
 					 }
 
+}
+
+
+func runProgram(userInput string) bool{
+	   parts:=strings.Fields(userInput)
+      command:=parts[0]
+		args:=parts[1:]
+
+		cmd:=exec.Command(command,args...)
+
+		cmd.Stderr=os.Stderr
+		cmd.Stdin=os.Stdin
+		cmd.Stdout=os.Stdout
+
+
+		err:=cmd.Run()
+
+		return err==nil
 }
