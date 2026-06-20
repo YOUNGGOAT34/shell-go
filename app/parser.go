@@ -10,16 +10,15 @@ func parseUserInput(userInput string) []string{
       
 		var currentArg strings.Builder;
 		inSingleQuotes:=false
+		inDoubleQuotes:=false
 
 		for _,char :=range userInput{
-			    if char==' ' &&  !inSingleQuotes {
-					  
+			    if char==' ' &&  !inSingleQuotes && !inDoubleQuotes {
+					 
 					 if len(currentArg.String())>0{
 
 						 args=append(args,currentArg.String())
 						 currentArg.Reset()
-						 
-
 					 }
 
 					 continue
@@ -29,6 +28,10 @@ func parseUserInput(userInput string) []string{
 					  
 					  inSingleQuotes=!inSingleQuotes
 					  continue
+				 }
+
+				 if char=='"'{
+                   inDoubleQuotes=!inDoubleQuotes
 				 }
 
 				 currentArg.WriteRune(char)
