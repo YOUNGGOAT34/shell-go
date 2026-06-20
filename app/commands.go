@@ -77,6 +77,7 @@ func execute(userInput string) bool{
 
 }
 
+
 func handleEcho(args []string){
 	    
 	    if len(args)>0{
