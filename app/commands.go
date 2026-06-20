@@ -79,7 +79,7 @@ func execute(userInput string) bool{
 
 func handleEcho(args []string){
 	    fmt.Println(len(args))
-	    if len(args)>1{
+	    if len(args)>0{
 			 fmt.Println(strings.Join(args," "))
 		 }else{
 			 fmt.Println()
