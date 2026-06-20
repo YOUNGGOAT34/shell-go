@@ -11,7 +11,7 @@ import (
 
 func isInbuilt(command string) bool{
 	    inbuilts:=map[string] bool{
-			"exit":true,"type":true,"echo":true,
+			"exit":true,"type":true,"echo":true,"pwd":true,
 		}
 		return inbuilts[command]
 }
