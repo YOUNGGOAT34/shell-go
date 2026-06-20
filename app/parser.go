@@ -32,6 +32,7 @@ func parseUserInput(userInput string) []string{
 
 				 if char=='"'{
                    inDoubleQuotes=!inDoubleQuotes
+						 continue
 				 }
 
 				 currentArg.WriteRune(char)
