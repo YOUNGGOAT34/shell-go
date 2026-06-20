@@ -16,4 +16,9 @@ func printWorkingDirectory(){
 
 		fmt.Println(dir)
 
-	}
+}
+
+
+func changeDirectory(path string){
+	    os.Chdir(path)
+}

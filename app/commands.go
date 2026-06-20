@@ -39,6 +39,14 @@ func execute(userInput string) bool{
 					    
 					   printWorkingDirectory()
 
+				case "cd":
+					    if len(parts)<2{
+                      fmt.Println("cd expected an argument")
+						 }else{
+
+							 changeDirectory(parts[1])
+						 }
+
 				default:
 					if !runProgram(userInput){
 
