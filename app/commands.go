@@ -40,6 +40,7 @@ func execute(userInput string) bool{
 				case "exit":
 					return false
 				case "echo":
+
 					handleEcho(args)
 				case "type":
 					      if len(args)<1{
@@ -77,6 +78,7 @@ func execute(userInput string) bool{
 }
 
 func handleEcho(args []string){
+	    fmt.Println(len(args))
 	    if len(args)>1{
 			 fmt.Println(strings.Join(args," "))
 		 }else{
