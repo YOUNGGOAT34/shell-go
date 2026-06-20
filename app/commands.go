@@ -35,6 +35,10 @@ func execute(userInput string) bool{
 
 									handleType(parts)		
 							}
+				case "pwd":
+					    
+					   printWorkingDirectory()
+
 				default:
 					if !runProgram(userInput){
 
@@ -62,6 +66,10 @@ func handleType(parts []string){
 	    pathEnv:=os.Getenv("PATH");
 					 dirs:=filepath.SplitList(pathEnv)
 					 found:=false
+
+					 if len(parts)<2 {
+						   fmt.Printf("type expected an argument\n")
+					 }
 					 for _,dir :=range dirs{
 						   fullPath:=filepath.Join(dir,parts[1])
 

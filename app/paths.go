@@ -1,7 +1,8 @@
 package main
 
 import (
-	 "os"
+	
+	"os"
 )
 
 
@@ -20,3 +21,4 @@ func isExecutable(path string) bool{
 
 
 }
+
