@@ -110,7 +110,6 @@ func handleType(cmd string){
 
 }
 
-
 func runProgram(command string,args []string) bool{
 	  
       
