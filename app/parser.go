@@ -63,13 +63,19 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 
 				 }else if char=='2' && i<len(runes)-1 && runes[i+1]=='>'{
 					    redirect.stderr=true
-
+                    
 						 if currentArg.Len()>0{
 							  args=append(args,currentArg.String())
 							  currentArg.Reset()
 						}
 
 						i++
+
+						//for appending
+
+						if i<len(runes) && runes[i]=='>'{
+							 i++
+						}
 
 						continue
 				 }
