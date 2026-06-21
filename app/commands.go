@@ -21,52 +21,43 @@ func execute(userInput string) bool{
 	   if len(userInput)<1{
 			 return true
 		}
-	  
-	  parts:=strings.SplitN(userInput," ",2)
+	  args:=parseUserInput(userInput)
+
 		
-      command:=parts[0]
+      command:=args[0]
       
-		var arguments string
-
-		if len(parts)>1{
-           arguments=parts[1]
-		}
-
-      
-		args:=parseUserInput(arguments)
-
-      
+		
 		switch command {
 				case "exit":
 					return false
 				case "echo":
 
-					handleEcho(args)
+					handleEcho(args[1:])
 				case "type":
-					      if len(args)<1{
+					      if len(args)<2{
                             fmt.Printf("type expected an argument\n")
 									 return true
 							}
-							if isInbuilt(args[0]){
-								fmt.Printf("%s is a shell builtin\n",args[0]);
+							if isInbuilt(args[1]){
+								fmt.Printf("%s is a shell builtin\n",args[1]);
 							}else{
-
-									handleType(args[0])		
+                          
+									handleType(args[1])		
 							}
 				case "pwd":
 					   
 					   printWorkingDirectory()
 
 				case "cd":
-					    if len(args)<1{
+					    if len(args)<2{
                       fmt.Println("cd expected an argument")
 						 }else{
 
-							 changeDirectory(parts[1])
+							 changeDirectory(args[1])
 						 }
 
 				default:
-					if !runProgram(command,args){
+					if !runProgram(command,args[1:]){
 
 						fmt.Printf("%s: command not found\n",command)
 					}
