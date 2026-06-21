@@ -49,6 +49,7 @@ func parseUserInput(userInput string) []string{
 
 				 if char=='"'{
 					    if inSingleQuotes {
+							// inside single quotes it should just behave like any other character ,no special meaning
 							   currentArg.WriteRune(char)
 						 }else{
 							 inDoubleQuotes=!inDoubleQuotes
