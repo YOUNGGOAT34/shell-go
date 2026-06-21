@@ -5,8 +5,27 @@ import (
 	 "os"
 	 "path/filepath"
 	 "os/exec"
+	 "errors"
 )
 
+
+type Redirect struct{
+	  stdout bool;
+	  fileName string
+	 
+}
+
+
+func createRedirectFile(fileName string) *os.File{
+	  file,err:=os.OpenFile(fileName,os.O_APPEND | os.O_CREATE | os.O_WRONLY,0644)
+
+	  if err!=nil{
+		   fmt.Println("Error opening/creating redirect file")
+			os.Exit(1)
+	  }
+
+	  return file
+}
 
 
 func isInbuilt(command string) bool{
@@ -16,17 +35,23 @@ func isInbuilt(command string) bool{
 		return inbuilts[command]
 }
 
+var redirect Redirect
+
 func execute(userInput string) bool{
 
 	   if len(userInput)<1{
 			 return true
 		}
-	  args:=parseUserInput(userInput)
 
+	   
 		
+
+	  args:=parseUserInput(userInput,&redirect)
+
+	  
+
       command:=args[0]
       
-		
 		switch command {
 				case "exit":
 					return false
@@ -70,12 +95,23 @@ func execute(userInput string) bool{
 
 
 func handleEcho(args []string){
+       oldStdout:=os.Stdout
+	    if redirect.stdout{
+			  file:=createRedirectFile(redirect.fileName)
+			  defer file.Close()
+			  
+			  os.Stdout=file
+			 
+		 }
+	 
 	    
 	    if len(args)>0{
 			 fmt.Println(strings.Join(args," "))
 		 }else{
 			 fmt.Println()
 		 }
+
+		  os.Stdout=oldStdout
 }
 
 
@@ -110,12 +146,29 @@ func runProgram(command string,args []string) bool{
 
 		cmd:=exec.Command(command,args...)
 
-		cmd.Stderr=os.Stderr
-		cmd.Stdin=os.Stdin
-		cmd.Stdout=os.Stdout
+		oldStdout:=os.Stdout
 
-       
+		if redirect.stdout{
+         file:=createRedirectFile(redirect.fileName)
+			defer file.Close()
+			cmd.Stdout=file
+		}else{
+          cmd.Stdout=os.Stdout
+		}
+
+         cmd.Stderr=os.Stderr
+		   cmd.Stdin=os.Stdin
+	
 		err:=cmd.Run()
 
-		return err==nil
+
+		if err !=nil{
+			    if errors.Is(err,exec.ErrNotFound){
+					  return false
+				 }
+		}
+
+		os.Stdout=oldStdout
+
+		return true
 }

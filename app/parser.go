@@ -3,15 +3,19 @@ package main
 import (
 	 "strings"
 	
+	
 )
 
-func parseUserInput(userInput string) []string{
+func parseUserInput(userInput string,redirect *Redirect) []string{
 	   var args []string
       
 		var currentArg strings.Builder;
 		inSingleQuotes:=false
 		inDoubleQuotes:=false
 
+
+		redirect.stdout=false
+		redirect.fileName=""
 
 
 		runes:=[]rune(userInput)
@@ -22,7 +26,7 @@ func parseUserInput(userInput string) []string{
 				 //handle backslash
 
 			    if char=='\\' && !inSingleQuotes && !inDoubleQuotes{
-					    if i<len(runes){
+					    if i<len(runes)-1{
 
 							 currentArg.WriteRune(runes[i+1])
 							 i++
@@ -32,7 +36,7 @@ func parseUserInput(userInput string) []string{
 					   
 					     //at this stage I should only escape " and \ ,,everything else should be treated as literal characters  
 						  
-						  if runes[i+1]=='"' || runes[i+1]=='\\'{
+						  if i<len(runes)-1 && (runes[i+1]=='"' || runes[i+1]=='\\'){
 
 										currentArg.WriteRune(runes[i+1])
 									   i++
@@ -41,8 +45,21 @@ func parseUserInput(userInput string) []string{
 						}
 						  continue
 				 }
-             
 
+				 if char=='>' || (char =='1' && i<len(runes)-1 && runes[i+1]=='>'){
+					   redirect.stdout=true
+						if currentArg.Len()>0{
+							  args=append(args,currentArg.String())
+							  currentArg.Reset()
+						}
+
+						if char=='1'{
+							 i++
+						}
+						
+						continue
+				 }
+             
 			    if char==' ' &&  !inSingleQuotes && !inDoubleQuotes {
 					 
 					 if len(currentArg.String())>0{
@@ -54,7 +71,7 @@ func parseUserInput(userInput string) []string{
 					 continue
 				 }
 
-
+              
 				 if char=='\'' && !inDoubleQuotes{
 					  
 					  inSingleQuotes=!inSingleQuotes
@@ -71,11 +88,23 @@ func parseUserInput(userInput string) []string{
 						 continue
 				 }
 
-				 currentArg.WriteRune(char)
+	
+					currentArg.WriteRune(char)
+					  
 		}
 
 		if len(currentArg.String())>0{
-			  args=append(args,currentArg.String())
+
+			  if redirect.stdout{
+					  redirect.fileName=currentArg.String()
+				 }else{
+                  
+					args=append(args,currentArg.String())
+					  
+				 }
+
+			  
 		}
+
 		return args
 }
