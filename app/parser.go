@@ -29,18 +29,18 @@ func parseUserInput(userInput string) []string{
 						 }
 						 continue
 				 }else if char=='\\' && inDoubleQuotes{
-					     currentArg.WriteRune(char)
+					     
 						  
 						  if runes[i+1]=='"' || runes[i+1]=='\\'{
-							      if runes[i+1]=='"'{
 
 										currentArg.WriteRune(runes[i+1])
-									}
-									i++
-						  }
+									   i++
+						}else{
+							currentArg.WriteRune(char)
+						}
 						  continue
-
 				 }
+             
 
 			    if char==' ' &&  !inSingleQuotes && !inDoubleQuotes {
 					 
@@ -52,6 +52,7 @@ func parseUserInput(userInput string) []string{
 
 					 continue
 				 }
+
 
 				 if char=='\'' && !inDoubleQuotes{
 					  
