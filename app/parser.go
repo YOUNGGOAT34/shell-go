@@ -19,15 +19,24 @@ func parseUserInput(userInput string) []string{
 		for i:=0;i<len(runes);i++{
              char:=runes[i]
 
+				 //handle backslash
+
 			    if char=='\\' && !inSingleQuotes && !inDoubleQuotes{
 					    if i<len(runes){
 
 							 currentArg.WriteRune(runes[i+1])
 							 i++
 						 }
-
-
 						 continue
+				 }else if char=='\\' && inDoubleQuotes{
+					     currentArg.WriteRune(char)
+						  
+						  if runes[i+1]=='"' || runes[i+1]=='\\'{
+							      currentArg.WriteRune(runes[i+1])
+									i++
+						  }
+						  continue
+
 				 }
 
 			    if char==' ' &&  !inSingleQuotes && !inDoubleQuotes {
