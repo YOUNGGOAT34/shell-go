@@ -15,7 +15,7 @@ func parseUserInput(userInput string) []string{
 
 
 		runes:=[]rune(userInput)
-		
+
 		for i:=0;i<len(runes);i++{
              char:=runes[i]
 
@@ -29,6 +29,7 @@ func parseUserInput(userInput string) []string{
 
 						 continue
 				 }
+
 			    if char==' ' &&  !inSingleQuotes && !inDoubleQuotes {
 					 
 					 if len(currentArg.String())>0{
@@ -47,7 +48,11 @@ func parseUserInput(userInput string) []string{
 				 }
 
 				 if char=='"'{
-                   inDoubleQuotes=!inDoubleQuotes
+					    if inSingleQuotes {
+							   currentArg.WriteRune(char)
+						 }else{
+							 inDoubleQuotes=!inDoubleQuotes
+						 }
 						 continue
 				 }
 
