@@ -29,7 +29,8 @@ func parseUserInput(userInput string) []string{
 						 }
 						 continue
 				 }else if char=='\\' && inDoubleQuotes{
-					     
+					   
+					     //at this stage I should only escape " and \ ,,everything else should be treated as literal characters  
 						  
 						  if runes[i+1]=='"' || runes[i+1]=='\\'{
 
