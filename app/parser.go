@@ -15,6 +15,7 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 
 
 		redirect.stdout=false
+		redirect.stderr=false
 		redirect.fileName=""
 
 
@@ -47,6 +48,7 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 				 }
 
 				 if char=='>' || (char =='1' && i<len(runes)-1 && runes[i+1]=='>'){
+
 					   redirect.stdout=true
 						if currentArg.Len()>0{
 							  args=append(args,currentArg.String())
@@ -57,6 +59,18 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 							 i++
 						}
 						
+						continue
+
+				 }else if char=='2' && i<len(runes)-1 && runes[i+1]=='>'{
+					    redirect.stderr=true
+
+						 if currentArg.Len()>0{
+							  args=append(args,currentArg.String())
+							  currentArg.Reset()
+						}
+
+						i++
+
 						continue
 				 }
              
@@ -95,7 +109,7 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 
 		if len(currentArg.String())>0{
 
-			  if redirect.stdout{
+			  if redirect.stdout || redirect.stderr{
 					  redirect.fileName=currentArg.String()
 				 }else{
                   

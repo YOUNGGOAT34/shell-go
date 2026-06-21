@@ -10,7 +10,8 @@ import (
 
 
 type Redirect struct{
-	  stdout bool;
+	  stdout bool
+	  stderr bool
 	  fileName string
 	 
 }
@@ -96,11 +97,20 @@ func execute(userInput string) bool{
 
 func handleEcho(args []string){
        oldStdout:=os.Stdout
+		 oldStderr:=os.Stderr
 	    if redirect.stdout{
 			  file:=createRedirectFile(redirect.fileName)
 			  defer file.Close()
 			  
 			  os.Stdout=file
+			 
+		 }
+
+		  if redirect.stderr{
+			  file:=createRedirectFile(redirect.fileName)
+			  defer file.Close()
+			  
+			  os.Stderr=file
 			 
 		 }
 	 
@@ -112,6 +122,7 @@ func handleEcho(args []string){
 		 }
 
 		  os.Stdout=oldStdout
+		  os.Stderr=oldStderr
 }
 
 
@@ -147,17 +158,35 @@ func runProgram(command string,args []string) bool{
 		cmd:=exec.Command(command,args...)
 
 		oldStdout:=os.Stdout
+		oldStderr:=os.Stderr
 
-		if redirect.stdout{
+		if redirect.stdout {
          file:=createRedirectFile(redirect.fileName)
 			defer file.Close()
-			cmd.Stdout=file
+
+          cmd.Stdout=file
+			
+    
 		}else{
           cmd.Stdout=os.Stdout
+			 
 		}
 
-         cmd.Stderr=os.Stderr
-		   cmd.Stdin=os.Stdin
+
+		if redirect.stderr {
+         file:=createRedirectFile(redirect.fileName)
+			defer file.Close()
+
+          cmd.Stderr=file
+			
+    
+		}else{
+          cmd.Stderr=os.Stdout
+			 
+		}
+
+       
+		cmd.Stdin=os.Stdin
 	
 		err:=cmd.Run()
 
@@ -169,6 +198,7 @@ func runProgram(command string,args []string) bool{
 		}
 
 		os.Stdout=oldStdout
+		os.Stderr=oldStderr
 
 		return true
 }
