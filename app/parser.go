@@ -32,10 +32,11 @@ func parseUserInput(userInput string) []string{
 					     currentArg.WriteRune(char)
 						  
 						  if runes[i+1]=='"' || runes[i+1]=='\\'{
-							      currentArg.WriteRune(runes[i+1])
+							      if runes[i+1]=='"'{
+
+										currentArg.WriteRune(runes[i+1])
+									}
 									i++
-						  }else{
-							    i++
 						  }
 						  continue
 
