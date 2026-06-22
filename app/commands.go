@@ -129,25 +129,25 @@ func handleEcho(args []string){
 func handleType(cmd string){
 	  
 	    pathEnv:=os.Getenv("PATH");
-					 dirs:=filepath.SplitList(pathEnv)
-					 found:=false
+		 dirs:=filepath.SplitList(pathEnv)
+		 found:=false
+      
+		for _,dir :=range dirs{
+			fullPath:=filepath.Join(dir,cmd)
 
-					 for _,dir :=range dirs{
-						   fullPath:=filepath.Join(dir,cmd)
+			if isExecutable(fullPath){
+					fmt.Printf("%s is %s\n",cmd,fullPath)
+					found=true
+					return
+					
+			}
 
-							if isExecutable(fullPath){
-								  fmt.Printf("%s is %s\n",cmd,fullPath)
-								  found=true
-								  return
-								  
-							}
+		}
+		
+		if !found{
 
-					 }
-
-					 if !found{
-
-						 fmt.Printf("%s: not found\n",cmd)
-					 }
+			fmt.Printf("%s: not found\n",cmd)
+		}
 
 }
 

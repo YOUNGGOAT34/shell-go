@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"io"
-    "errors"
-	 "unicode/utf8"
+	// "log"
+	"os"
+	"path/filepath"
+	"unicode/utf8"
 
 	"golang.org/x/term"
 )
@@ -13,6 +15,9 @@ import (
 var builtins=[][]rune{
       []rune("exit"),
 		[]rune("echo"),
+		[]rune("pwd"),
+		[]rune("type"),
+		
 }
 
 
@@ -33,6 +38,38 @@ func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
 }
 
 
+
+func executableAutocompletion(userInput *[]rune) bool{
+	   pathEnv:=os.Getenv("PATH")
+
+		currentInput:=*userInput
+
+		dirs:=filepath.SplitList(pathEnv)
+
+		for _,dir:=range dirs{
+			   entries,err:=os.ReadDir(dir)
+
+				if err!=nil{
+					 continue
+				}
+
+				for _,entry :=range entries{
+					   if !entry.IsDir(){
+
+							    if hasPrefixRune([]rune(entry.Name()),currentInput){
+									   *userInput=[]rune(entry.Name())
+										*userInput=append(*userInput,' ')
+										return true
+								 }
+							   
+						}
+				}
+		}
+
+		return false
+}
+
+
 func autocomplete(userInput *[]rune) bool{
 
     currentInput:=*userInput
@@ -44,6 +81,14 @@ func autocomplete(userInput *[]rune) bool{
 				  return true
 			}
 	 }
+
+
+	 if executableAutocompletion(userInput){
+		 
+		  return true
+	 }
+
+
 
 	 return false
 }
