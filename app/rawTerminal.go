@@ -23,6 +23,23 @@ var builtins=[][]rune{
 
 
 
+
+func findLastSlash(userInput []rune) int{
+	 
+	   lastIndex:=0
+
+		for index,char :=range userInput{
+			   if char=='/'{
+					  lastIndex=index
+				}
+		}
+      
+		return lastIndex
+
+}
+
+
+
 func findFirstSpace(userInput []rune) int{
 	   for i,r :=range userInput{
 			   if r==' '{
@@ -55,6 +72,12 @@ func longestCommonPrefix(matches [][]rune) int{
 
 
 func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
+   
+
+	  if len(currentInput)==0{
+		 return true
+	  }
+
 	  if len(currentInput)>len(fullCommand){
 		 return false
 	  }
@@ -113,8 +136,15 @@ func autocomplete(currentInput []rune) ([][]rune){
   
 	 spaceIndex:=findFirstSpace(currentInput)
 
+
 	 if spaceIndex!=-1{
-		     matches=searchInCurrentDirectory(currentInput[spaceIndex+1:])
+		     lastSlash:=findLastSlash(currentInput)
+			  
+		     if lastSlash>0{
+                matches=searchInDirectory(currentInput[lastSlash+1:],string(currentInput[spaceIndex+1:lastSlash]))
+			  }else{
+				  matches=searchInDirectory(currentInput[spaceIndex+1:],".")
+			  }
 			  return matches
 			  
 	}
@@ -227,7 +257,7 @@ func processRawInput() []rune{
 									   tab_count++
 
                               matches:=autocomplete(userInput)
-										
+
 										switch tab_count {
 											
                                  case 1:
@@ -262,10 +292,35 @@ func processRawInput() []rune{
                                              */
 
 														    spaceIndex:=findFirstSpace(userInput)
+															 
 
 														   if spaceIndex!=-1{
+
+																 /*
+                                                      what if the user typed in something like cat path/to/f
+
+																		to autocomplete this ,we can't overwrite the entire second part ,therefore we need to find the last
+																		occurrence of /
+
+																		then overwrite everything that follows with our match
+																    
+																 */
+
+																 
+
+																
+
+																 lastSlash:=findLastSlash(userInput)
+                                                  
+																 if lastSlash>0{
+																	 
+																	 userInput=append(userInput[:lastSlash+1],matches[0]...)
+
+																 }else{
+																	   userInput=append(userInput[:spaceIndex+1],matches[0]...)
+																 }
                                                  
-																 userInput=append(userInput[:spaceIndex+1],matches[0]...)
+																
                                                 
 															}else{
 																userInput=matches[0]

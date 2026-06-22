@@ -7,6 +7,11 @@ import (
 )
 
 
+
+
+
+
+
 func isExecutable(path string) bool{
 	  info,err:=os.Stat(path)
 
@@ -24,14 +29,17 @@ func isExecutable(path string) bool{
 }
 
 
-func searchInCurrentDirectory(userInput []rune) [][]rune{
 
-	   
-	    entries,err:=os.ReadDir(".")
 
+
+func searchInDirectory(userInput []rune,path string) [][]rune{
+       
+		 entries,err:=os.ReadDir(path)
+		
 		 var matches [][]rune
        
 		 if err!=nil{
+			   
 			    fmt.Fprintln(os.Stderr,"Error: ",err)
 				 return matches
 		 }
@@ -44,6 +52,7 @@ func searchInCurrentDirectory(userInput []rune) [][]rune{
 				 fileName:=[]rune(entry.Name())
 
 				 if hasPrefixRune(fileName,userInput){
+					 
 					  matches=append(matches, []rune(fileName))
 					  
 				 }
