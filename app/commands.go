@@ -1,11 +1,13 @@
 package main
+
 import (
-	 "fmt"
-	 "strings"
-	 "os"
-	 "path/filepath"
-	 "os/exec"
-	 "errors"
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	
 )
 
 
@@ -15,6 +17,10 @@ type Redirect struct{
 	  fileName string
 	 
 }
+
+
+
+
 
 
 func createRedirectFile(fileName string) *os.File{

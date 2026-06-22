@@ -24,6 +24,26 @@ var builtins=[][]rune{
 
 
 
+func longestCommonPrefix(matches [][]rune) int{
+   base:=matches[0]
+	
+
+	 longestCommonPrefix:=0
+	 
+    for index,char:= range base{
+		    for _,match:=range matches[1:]{
+				   if index>=len(match) || (index<len(match) && match[index] !=char){
+						  return longestCommonPrefix
+					}
+			 }
+
+			 longestCommonPrefix+=1
+	 }
+
+	 return longestCommonPrefix
+}
+
+
 func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
 	  if len(currentInput)>len(fullCommand){
 		 return false
@@ -181,22 +201,40 @@ func processRawInput() []rune{
 									_break=true
 									
 								case '\t':
+									  
 
 									   tab_count++
                               matches:=autocomplete(&userInput)
 										
-										if tab_count==1{
-											 if len(matches)<1 || matches==nil || len(matches)>1{
-												   fmt.Print("\a")
-											 }else if len(matches)==1{
-												    userInput=matches[0]
-													 userInput=append(userInput, ' ')
-													 tab_count=0
-											 }
-										}else if tab_count==2{
-											     printMatches(matches)
-												  tab_count=0
-										}
+										switch tab_count {
+											
+                                 case 1:
+													
+													if len(matches)<1 || matches==nil || len(matches)>1{
+															
+															
+															if len(matches)>1{
+																lcp:=longestCommonPrefix(matches)
+																
+																if lcp>len(userInput){
+																	userInput=matches[0][:lcp]
+																	tab_count=0
+																}else{
+																	 fmt.Print("\a") 
+																}
+															}else{
+
+																fmt.Print("\a")
+															}
+													}else if len(matches)==1{
+															userInput=matches[0]
+															userInput=append(userInput, ' ')
+															tab_count=0
+													}
+											case 2:
+													printMatches(matches)
+													tab_count=0
+											}
              
                               
 
