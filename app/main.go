@@ -1,35 +1,28 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-
-	"strings"
-)
-
 
 
 func main() {
 
 	for{
+    
+		
+	   
+		userInput,brk:=processRawInput()
 
 		
-	
-		fmt.Print("$ ");
+      
+		if brk{
+			 break
+		}
 
-	   
-		reader:=bufio.NewReader(os.Stdin)
-     
-		userInput,_:=reader.ReadString('\n')
 
-		userInput=strings.TrimSpace(userInput)
+		
 	   
 		if !execute(userInput){
 			 break
 		}
      
-		
 	}
 
 }

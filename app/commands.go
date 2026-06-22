@@ -21,8 +21,10 @@ func createRedirectFile(fileName string) *os.File{
 	  file,err:=os.OpenFile(fileName,os.O_APPEND | os.O_CREATE | os.O_WRONLY,0644)
 
 	  if err!=nil{
-		   fmt.Println("Error opening/creating redirect file")
-			os.Exit(1)
+		   fmt.Printf("Error opening/creating redirect file :%v",err)
+
+			return nil
+			
 	  }
 
 	  return file
@@ -38,19 +40,17 @@ func isInbuilt(command string) bool{
 
 var redirect Redirect
 
-func execute(userInput string) bool{
+func execute(userInput []rune) bool{
 
 	   if len(userInput)<1{
 			 return true
 		}
 
-	   
-		
 
 	  args:=parseUserInput(userInput,&redirect)
 
 	  
-
+      
       command:=args[0]
       
 		switch command {
@@ -160,35 +160,56 @@ func runProgram(command string,args []string) bool{
 		oldStdout:=os.Stdout
 		oldStderr:=os.Stderr
 
-		if redirect.stdout {
-         file:=createRedirectFile(redirect.fileName)
-			defer file.Close()
-
-          cmd.Stdout=file
+		var file *os.File
+		if redirect.stdout || redirect.stderr {
+         file=createRedirectFile(redirect.fileName)
 			
+
+			if file==nil{
+				  
+				 cmd.Stdout=os.Stdout
+				 cmd.Stderr=os.Stderr
+			}else{
+
+				 defer file.Close()
+
+				   if redirect.stdout {
+      
+           			cmd.Stdout=file
+
+						}else{
+							cmd.Stdout=os.Stdout
+							
+						}
+					if redirect.stderr {
+        
+
+							cmd.Stderr=file
+							
+					
+						}else{
+							cmd.Stderr=os.Stderr
+							
+						}
+
+			}
     
 		}else{
-          cmd.Stdout=os.Stdout
-			 
+			cmd.Stdout=os.Stdout
+			cmd.Stderr=os.Stderr
 		}
 
 
-		if redirect.stderr {
-         file:=createRedirectFile(redirect.fileName)
-			defer file.Close()
+	
 
-          cmd.Stderr=file
-			
-    
-		}else{
-          cmd.Stderr=os.Stdout
-			 
-		}
 
-       
+	
+
 		cmd.Stdin=os.Stdin
 	
+		
 		err:=cmd.Run()
+
 
 
 		if err !=nil{
@@ -199,6 +220,7 @@ func runProgram(command string,args []string) bool{
 
 		os.Stdout=oldStdout
 		os.Stderr=oldStderr
+
 
 		return true
 }

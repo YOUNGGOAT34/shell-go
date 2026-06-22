@@ -6,7 +6,7 @@ import (
 	
 )
 
-func parseUserInput(userInput string,redirect *Redirect) []string{
+func parseUserInput(userInput []rune,redirect *Redirect) []string{
 	   var args []string
       
 		var currentArg strings.Builder;
@@ -17,7 +17,7 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 		redirect.stdout=false
 		redirect.stderr=false
 		redirect.fileName=""
-
+      
 
 		runes:=[]rune(userInput)
 
@@ -55,8 +55,12 @@ func parseUserInput(userInput string,redirect *Redirect) []string{
 							  currentArg.Reset()
 						}
 
-						if char=='1'{
+						if char=='1' {
 							 i++
+						}
+
+						if  i<len(runes)-1 && runes[i+1]=='>'{
+							  i++
 						}
 						
 						continue
