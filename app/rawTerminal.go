@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-
 	"sort"
 	"os"
 	"path/filepath"
@@ -20,6 +19,17 @@ var builtins=[][]rune{
 		[]rune("pwd"),
 		[]rune("type"),
 		
+}
+
+
+
+func findFirstSpace(userInput []rune) int{
+	   for i,r :=range userInput{
+			   if r==' '{
+					 return i
+				}
+		}
+	   return -1
 }
 
 
@@ -61,12 +71,12 @@ func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
 
 
 
-func executableAutocompletion(userInput *[]rune) [][]rune{
+func executableAutocompletion(currentInput []rune) [][]rune{
 	   pathEnv:=os.Getenv("PATH")
 
 		var matches [][]rune
 
-		currentInput:=*userInput
+		
 
 		dirs:=filepath.SplitList(pathEnv)
 
@@ -93,10 +103,21 @@ func executableAutocompletion(userInput *[]rune) [][]rune{
 }
 
 
-func autocomplete(userInput *[]rune) ([][]rune){
+func autocomplete(currentInput []rune) ([][]rune){
 
-    currentInput:=*userInput
+
+   
+
 	 var matches[][] rune
+
+  
+	 spaceIndex:=findFirstSpace(currentInput)
+
+	 if spaceIndex!=-1{
+		     matches=searchInCurrentDirectory(currentInput[spaceIndex+1:])
+			  return matches
+			  
+	}
 
    
 	 if len(currentInput)==0{
@@ -116,7 +137,7 @@ func autocomplete(userInput *[]rune) ([][]rune){
 		  return matches
 	 }
 
-   matches=append(matches,executableAutocompletion(userInput)...)
+   matches=append(matches,executableAutocompletion(currentInput)...)
 
 	 return matches
 }
@@ -204,7 +225,8 @@ func processRawInput() []rune{
 									  
 
 									   tab_count++
-                              matches:=autocomplete(&userInput)
+
+                              matches:=autocomplete(userInput)
 										
 										switch tab_count {
 											
@@ -223,11 +245,33 @@ func processRawInput() []rune{
 																	 fmt.Print("\a") 
 																}
 															}else{
-
+                                                 
 																fmt.Print("\a")
 															}
 													}else if len(matches)==1{
-															userInput=matches[0]
+
+
+														  /*
+														      if there was a space we just want to overwrite the second part
+
+																for example the user types something like : cat mai  
+																and the presses tab ,then only part that should be completed is the mai part ,
+																not the entire input ,therefore we have to find if there was space inside the user input
+																the findFirstSpace function returns -1 if there was no space
+
+                                             */
+
+														    spaceIndex:=findFirstSpace(userInput)
+
+														   if spaceIndex!=-1{
+                                                 
+																 userInput=append(userInput[:spaceIndex+1],matches[0]...)
+                                                
+															}else{
+																userInput=matches[0]
+																
+																
+															}
 															userInput=append(userInput, ' ')
 															tab_count=0
 													}
