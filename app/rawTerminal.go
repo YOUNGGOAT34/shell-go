@@ -100,20 +100,21 @@ func processRawInput() []rune{
 
 						char,size:=utf8.DecodeRune(buffer[i:bytesRead])
 	               i+=size
-						if char=='\r' || char=='\n'{
-							  
-							  _break=true
-							 
-						}else if char==3{
-							
-							 _break=true
-							 
-						}else if char=='\t'{
-								  if !autocomplete(&userInput){
-									  fmt.Printf("\a")
-								  }
-						}else{
-							 userInput=append(userInput,char)
+						switch char {
+								case '\r', '\n':
+									
+									_break=true
+									
+								case 3:
+									
+									_break=true
+									
+								case '\t':
+										if !autocomplete(&userInput){
+											fmt.Printf("\a")
+										}
+								default:
+									userInput=append(userInput,char)
 						}
 					}
 
