@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	// "log"
+	"strings"
+
+	"sort"
 	"os"
 	"path/filepath"
 	"unicode/utf8"
@@ -39,8 +41,10 @@ func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
 
 
 
-func executableAutocompletion(userInput *[]rune) bool{
+func executableAutocompletion(userInput *[]rune) [][]rune{
 	   pathEnv:=os.Getenv("PATH")
+
+		var matches [][]rune
 
 		currentInput:=*userInput
 
@@ -57,51 +61,73 @@ func executableAutocompletion(userInput *[]rune) bool{
 					   if !entry.IsDir(){
 
 							    if hasPrefixRune([]rune(entry.Name()),currentInput){
-									   *userInput=[]rune(entry.Name())
-										*userInput=append(*userInput,' ')
-										return true
+									    matches=append(matches,[]rune(entry.Name()))
+										 
 								 }
 							   
 						}
 				}
 		}
 
-		return false
+		return matches
 }
 
 
-func autocomplete(userInput *[]rune) bool{
+func autocomplete(userInput *[]rune) ([][]rune){
 
     currentInput:=*userInput
-	 
+	 var matches[][] rune
+
+   
+	 if len(currentInput)==0{
+		 return nil
+	 }
+
 	 for _,builtin :=range builtins{
 		   if hasPrefixRune(builtin,currentInput){
-				  *userInput=builtin
-				  *userInput=append(*userInput,' ')
-				  return true
+				  match:=make([]rune,len(builtin))
+				  copy(match,builtin)
+              matches=append(matches,match)
+				  continue
 			}
 	 }
 
-
-	 if executableAutocompletion(userInput){
-		 
-		  return true
+	 if len(matches)>0{
+		  return matches
 	 }
 
+   matches=append(matches,executableAutocompletion(userInput)...)
 
-
-	 return false
+	 return matches
 }
+
+
+func printMatches(matches [][]rune){
+	  if len(matches)<1{
+		 return
+	  }
+
+	  var matchStrings []string
+
+	  for _,match :=range matches{
+		     
+		   str:=strings.TrimSpace(string(match))
+
+			matchStrings=append(matchStrings, str)
+	  }
+
+
+	  sort.Strings(matchStrings)
+
+	  fmt.Printf("\r\n%s\r\n",strings.Join(matchStrings,"  "))
+}
+
+
 
 func processRawInput() []rune{
 
-	   
-
 	   fd:=int(os.Stdin.Fd())
-
-		
-
-
+      
 		oldTerminalState,err:=term.MakeRaw(fd)
 
 		if err!=nil{
@@ -118,11 +144,11 @@ func processRawInput() []rune{
 
 		fmt.Print("$ ");
 
-
-		
-
-
+		tab_count:=0
+       
 		for{
+
+			   
 
 			  _break:=false
 
@@ -155,10 +181,27 @@ func processRawInput() []rune{
 									_break=true
 									
 								case '\t':
-										if !autocomplete(&userInput){
-											fmt.Printf("\a")
+
+									   tab_count++
+                              matches:=autocomplete(&userInput)
+										
+										if tab_count==1{
+											 if len(matches)<1 || matches==nil || len(matches)>1{
+												   fmt.Print("\a")
+											 }else if len(matches)==1{
+												    userInput=matches[0]
+													 userInput=append(userInput, ' ')
+													 tab_count=0
+											 }
+										}else if tab_count==2{
+											     printMatches(matches)
+												  tab_count=0
 										}
+             
+                              
+
 								default:
+									tab_count=0
 									userInput=append(userInput,char)
 						}
 					}
@@ -173,16 +216,10 @@ func processRawInput() []rune{
 				 
    
 				}
-
-
-				
-			 
+ 
 		}
 
 
-
-	
 		return userInput
 
-      
 }

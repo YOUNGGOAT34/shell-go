@@ -49,15 +49,14 @@ func execute(userInput []rune) bool{
 
 	  args:=parseUserInput(userInput,&redirect)
 
-	  
-      
       command:=args[0]
+		
       
 		switch command {
 				case "exit":
 					return false
 				case "echo":
-
+					
 					handleEcho(args[1:])
 				case "type":
 					      if len(args)<2{
@@ -84,7 +83,7 @@ func execute(userInput []rune) bool{
 
 				default:
 					if !runProgram(command,args[1:]){
-
+              
 						fmt.Printf("%s: command not found\n",command)
 					}
 				}
