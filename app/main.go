@@ -8,17 +8,8 @@ func main() {
     
 		
 	   
-		userInput,brk:=processRawInput()
+		userInput:=processRawInput()
 
-		
-      
-		if brk{
-			 break
-		}
-
-
-		
-	   
 		if !execute(userInput){
 			 break
 		}

@@ -33,7 +33,7 @@ func hasPrefixRune(fullCommand []rune,currentInput []rune) bool{
 }
 
 
-func autocomplete(userInput *[]rune){
+func autocomplete(userInput *[]rune) bool{
 
     currentInput:=*userInput
 	 
@@ -41,12 +41,14 @@ func autocomplete(userInput *[]rune){
 		   if hasPrefixRune(builtin,currentInput){
 				  *userInput=builtin
 				  *userInput=append(*userInput,' ')
-				  return
+				  return true
 			}
 	 }
+
+	 return false
 }
 
-func processRawInput() ([]rune,bool){
+func processRawInput() []rune{
 
 	   
 
@@ -107,7 +109,9 @@ func processRawInput() ([]rune,bool){
 							 _break=true
 							 
 						}else if char=='\t'{
-								  autocomplete(&userInput)
+								  if !autocomplete(&userInput){
+									  fmt.Printf("\a")
+								  }
 						}else{
 							 userInput=append(userInput,char)
 						}
@@ -132,7 +136,7 @@ func processRawInput() ([]rune,bool){
 
 
 	
-		return userInput,false
+		return userInput
 
       
 }
