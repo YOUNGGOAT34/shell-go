@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	
 )
 
 
@@ -60,8 +59,7 @@ func execute(userInput []rune) bool{
 	  args:=parseUserInput(userInput,&redirect)
 
       command:=args[0]
-		
-      
+
 		switch command {
 				case "exit":
 					return false
@@ -90,6 +88,10 @@ func execute(userInput []rune) bool{
 
 							 changeDirectory(args[1])
 						 }
+
+				case "complete":
+					  
+					  complete(args[1:])
 
 				default:
 					if !runProgram(command,args[1:]){
@@ -208,11 +210,6 @@ func runProgram(command string,args []string) bool{
 			cmd.Stderr=os.Stderr
 		}
 
-
-	
-
-
-	
 
 		cmd.Stdin=os.Stdin
 	

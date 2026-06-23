@@ -19,27 +19,29 @@ func parseUserInput(userInput []rune,redirect *Redirect) []string{
 		redirect.fileName=""
       
 
-		runes:=[]rune(userInput)
+	
 
-		for i:=0;i<len(runes);i++{
-             char:=runes[i]
+		for i:=0;i<len(userInput);i++{
+             char:=userInput[i]
 
 				 //handle backslash
 
 			    if char=='\\' && !inSingleQuotes && !inDoubleQuotes{
-					    if i<len(runes)-1{
+					    if i<len(userInput)-1{
 
-							 currentArg.WriteRune(runes[i+1])
+							 currentArg.WriteRune(userInput[i+1])
 							 i++
 						 }
+
 						 continue
+						 
 				 }else if char=='\\' && inDoubleQuotes{
 					   
 					     //at this stage I should only escape " and \ ,,everything else should be treated as literal characters  
 						  
-						  if i<len(runes)-1 && (runes[i+1]=='"' || runes[i+1]=='\\'){
+						  if i<len(userInput)-1 && (userInput[i+1]=='"' || userInput[i+1]=='\\'){
 
-										currentArg.WriteRune(runes[i+1])
+										currentArg.WriteRune(userInput[i+1])
 									   i++
 						}else{
 							currentArg.WriteRune(char)
@@ -47,7 +49,7 @@ func parseUserInput(userInput []rune,redirect *Redirect) []string{
 						  continue
 				 }
 
-				 if char=='>' || (char =='1' && i<len(runes)-1 && runes[i+1]=='>'){
+				 if char=='>' || (char =='1' && i<len(userInput)-1 && userInput[i+1]=='>'){
 
 					   redirect.stdout=true
 						if currentArg.Len()>0{
@@ -59,13 +61,13 @@ func parseUserInput(userInput []rune,redirect *Redirect) []string{
 							 i++
 						}
 
-						if  i<len(runes)-1 && runes[i+1]=='>'{
+						if  i<len(userInput)-1 && userInput[i+1]=='>'{
 							  i++
 						}
 						
 						continue
 
-				 }else if char=='2' && i<len(runes)-1 && runes[i+1]=='>'{
+				 }else if char=='2' && i<len(userInput)-1 && userInput[i+1]=='>'{
 					    redirect.stderr=true
                     
 						 if currentArg.Len()>0{
@@ -77,7 +79,7 @@ func parseUserInput(userInput []rune,redirect *Redirect) []string{
 
 						//for appending
 
-						if i<len(runes) && runes[i]=='>'{
+						if i<len(userInput) && userInput[i]=='>'{
 							 i++
 						}
 
