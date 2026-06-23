@@ -40,10 +40,11 @@ func findLastSlash(userInput []rune) int{
 
 
 
-func findFirstSpace(userInput []rune) int{
+func findLastSpace(userInput []rune) int{
 	   lastSpaceIndex:=-1
 	   for i,r :=range userInput{
 			   if r==' '{
+					 
 					 lastSpaceIndex=i
 				}
 		}
@@ -129,24 +130,27 @@ func executableAutocompletion(currentInput []rune) [][]rune{
 }
 
 
-func autocomplete(currentInput []rune) ([][]rune){
+/*
+   SearchInDir is a flag to tell the program where it should search for matches
+	if true ,it means search in the current directory or subdirectories else search in path and builtins
+*/
+func autocomplete(currentInput []rune,searchInDir bool) ([][]rune){
 
 
    
 
 	 var matches[][] rune
 
-  
-	 spaceIndex:=findFirstSpace(currentInput)
 
+	 if searchInDir{
 
-	 if spaceIndex!=-1{
 		     lastSlash:=findLastSlash(currentInput)
 			  
 		     if lastSlash>0{
-                matches=searchInDirectory(currentInput[lastSlash+1:],string(currentInput[spaceIndex+1:lastSlash]))
+                matches=searchInDirectory(currentInput[lastSlash+1:],string(currentInput[:lastSlash]))
 			  }else{
-				  matches=searchInDirectory(currentInput[spaceIndex+1:],".")
+				 
+				  matches=searchInDirectory(currentInput,".")
 			  }
 			  return matches
 			  
@@ -171,6 +175,9 @@ func autocomplete(currentInput []rune) ([][]rune){
 		  return matches
 	 }
 
+	
+
+
    matches=append(matches,executableAutocompletion(currentInput)...)
 
 	 return matches
@@ -178,6 +185,7 @@ func autocomplete(currentInput []rune) ([][]rune){
 
 
 func printMatches(matches [][]rune){
+	 
 	  if len(matches)<1{
 		 return
 	  }
@@ -195,6 +203,7 @@ func printMatches(matches [][]rune){
 	  sort.Strings(matchStrings)
 
 	  fmt.Printf("\r\n%s\r\n",strings.Join(matchStrings,"  "))
+	  os.Stdout.Sync()
 }
 
 
@@ -271,10 +280,28 @@ func processRawInput() []rune{
 									  
 									   tab_count++
 
-                              matches:=autocomplete(userInput)
+										/*
+										    If the input is something like : cat file/file1
 
-										 
-										 
+											 I don't want to pass the entire thing to the autocompletion ,I only want to pass the part after the last space
+										*/
+
+										lastSpace:=findLastSpace(userInput)
+
+										var inputToAutocomplete []rune
+										var searchInDir bool
+
+										if lastSpace != -1{
+                                 inputToAutocomplete=userInput[lastSpace+1:]
+											searchInDir=true
+										}else{
+											 inputToAutocomplete=userInput
+											 searchInDir=false
+										}
+
+										
+
+                              matches:=autocomplete(inputToAutocomplete,searchInDir)
 
 										switch tab_count {
 											
@@ -296,7 +323,7 @@ func processRawInput() []rune{
 
 																if lcp>0{
 
-																	spaceIndex:=findFirstSpace(userInput)
+																	spaceIndex:=findLastSpace(userInput)
 
 																	if spaceIndex==-1{
 
@@ -329,6 +356,7 @@ func processRawInput() []rune{
 																					if len(prefix)>len(userInput[spaceIndex+1:]){
 
                                                                       userInput=append(userInput[:spaceIndex+1],prefix... )
+																							 tab_count=0
                                                                      
 																					}else{
 																						  fmt.Print("\a") 
@@ -339,6 +367,7 @@ func processRawInput() []rune{
 
 																					if len(prefix)>len(userInput[lastSlashIndex+1:]){
 																						userInput=append(userInput[:lastSlashIndex+1],prefix...)
+																						tab_count=0
 																					}else{
 																						  fmt.Print("\a") 
 																					}
@@ -363,13 +392,12 @@ func processRawInput() []rune{
 																for example the user types something like : cat mai  
 																and the presses tab ,then only part that should be completed is the mai part ,
 																not the entire input ,therefore we have to find if there was space inside the user input
-																the findFirstSpace function returns -1 if there was no space
+																the findLastSpace function returns -1 if there was no space
+																the function finds the last space
 
                                              */
 
-														    spaceIndex:=findFirstSpace(userInput)
-															 
-
+														    spaceIndex:=findLastSpace(userInput)
 														   if spaceIndex!=-1{
 
 																 /*
