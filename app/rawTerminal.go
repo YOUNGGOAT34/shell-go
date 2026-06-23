@@ -41,12 +41,13 @@ func findLastSlash(userInput []rune) int{
 
 
 func findFirstSpace(userInput []rune) int{
+	   lastSpaceIndex:=-1
 	   for i,r :=range userInput{
 			   if r==' '{
-					 return i
+					 lastSpaceIndex=i
 				}
 		}
-	   return -1
+	   return lastSpaceIndex
 }
 
 
