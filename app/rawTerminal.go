@@ -114,7 +114,9 @@ func executableAutocompletion(currentInput []rune) [][]rune{
 					   if !entry.IsDir(){
 
 							    if hasPrefixRune([]rune(entry.Name()),currentInput){
-									    matches=append(matches,[]rune(entry.Name()))
+									    match:=[]rune(entry.Name())
+										 match=append(match, ' ')
+									    matches=append(matches,match)
 										 
 								 }
 							   
@@ -158,6 +160,7 @@ func autocomplete(currentInput []rune) ([][]rune){
 		   if hasPrefixRune(builtin,currentInput){
 				  match:=make([]rune,len(builtin))
 				  copy(match,builtin)
+				  match=append(match, ' ')
               matches=append(matches,match)
 				  continue
 			}
@@ -327,7 +330,7 @@ func processRawInput() []rune{
 																
 																
 															}
-															userInput=append(userInput, ' ')
+															
 															tab_count=0
 													}
 											case 2:

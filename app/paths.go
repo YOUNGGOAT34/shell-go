@@ -45,15 +45,18 @@ func searchInDirectory(userInput []rune,path string) [][]rune{
 		 }
 
 		 for _,entry :=range entries{
-			    if entry.IsDir(){
-					  continue
-				 }
+			    
 
-				 fileName:=[]rune(entry.Name())
+				 fileOrDirectoryName:=[]rune(entry.Name())
 
-				 if hasPrefixRune(fileName,userInput){
-					 
-					  matches=append(matches, []rune(fileName))
+				 if hasPrefixRune(fileOrDirectoryName,userInput){
+                 if entry.IsDir(){
+                    fileOrDirectoryName=append(fileOrDirectoryName, '/')
+					  }else{
+                         fileOrDirectoryName=append(fileOrDirectoryName, ' ')
+						  }	
+
+						  matches=append(matches,fileOrDirectoryName)
 					  
 				 }
 		 }
