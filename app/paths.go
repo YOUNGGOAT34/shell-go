@@ -49,7 +49,15 @@ func searchInDirectory(userInput []rune,path string) [][]rune{
 
 				 fileOrDirectoryName:=[]rune(entry.Name())
 
+				 
+
 				 if hasPrefixRune(fileOrDirectoryName,userInput){
+                   /*
+                      when the user presses tab ,autocompletion for a file name should ,the match should be prefixed with a space ,
+							 But for a directory it should be prefixed with a /
+
+						 */
+					 
                  if entry.IsDir(){
                     fileOrDirectoryName=append(fileOrDirectoryName, '/')
 					  }else{

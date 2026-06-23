@@ -218,17 +218,21 @@ func processRawInput() []rune{
 
 		fmt.Print("$ ");
 
+		
+
 		tab_count:=0
        
 		for{
 
+			
+         
 			   
 
 			  _break:=false
 
 			  bytesRead,err:=os.Stdin.Read(buffer)
 
-
+           
 
 			  if err!=nil{
 				   if errors.Is(err,io.EOF){
@@ -237,11 +241,18 @@ func processRawInput() []rune{
 				   panic(err)
 			  }
 
+
+			 
+
 			   if bytesRead>0{
 
 					i:=0
 
+					 
+
 					for i<bytesRead{
+
+						
 
 						char,size:=utf8.DecodeRune(buffer[i:bytesRead])
 	               i+=size
@@ -255,11 +266,14 @@ func processRawInput() []rune{
 									_break=true
 									
 								case '\t':
+									
 									  
-
 									   tab_count++
 
                               matches:=autocomplete(userInput)
+
+										 
+										 
 
 										switch tab_count {
 											
@@ -269,19 +283,77 @@ func processRawInput() []rune{
 															
 															
 															if len(matches)>1{
+
+                                                 	/*
+																	If there were multiple matches and they share a common prefix ,autocomplete with the longest common prefix,
+																	otherwise ring a bell
+																	the longestCommonPrefix function returns the longest common prefix in the matches
+																	
+																	*/
+
 																lcp:=longestCommonPrefix(matches)
-																
-																if lcp>len(userInput){
-																	userInput=matches[0][:lcp]
-																	tab_count=0
+
+																if lcp>0{
+
+																	spaceIndex:=findFirstSpace(userInput)
+
+																	if spaceIndex==-1{
+
+																				if lcp>len(userInput){
+																					userInput=matches[0][:lcp]
+																					tab_count=0
+																				}else{
+																					fmt.Print("\a") 
+																				}
+																	}else if spaceIndex>0{
+																		  
+																				/*
+																					At this point it might be a directory or a just a file within a directory
+																					we can tell this by finding if the user input  had a /
+																					the findLastSlash function finds the position of the last / in a given path 
+																					if there was no / it returns 0 ,this will indicate that it was either a file in the parent directory
+																					or a directory in the parent directory
+																				*/
+						
+																				lastSlashIndex:=findLastSlash(userInput)
+
+																				/* 
+																					   If this prefix is longer than the current input ,then autcomplete ,otherwise ring a bell
+																					*/
+																				
+						                                          prefix:=matches[0][:lcp]
+
+																				if lastSlashIndex==0{
+
+																					if len(prefix)>len(userInput[spaceIndex+1:]){
+
+                                                                      userInput=append(userInput[:spaceIndex+1],prefix... )
+                                                                     
+																					}else{
+																						  fmt.Print("\a") 
+																					}
+																					   
+																						
+																				}else{
+
+																					if len(prefix)>len(userInput[lastSlashIndex+1:]){
+																						userInput=append(userInput[:lastSlashIndex+1],prefix...)
+																					}else{
+																						  fmt.Print("\a") 
+																					}
+
+																				}
+																	}
+																	
 																}else{
-																	 fmt.Print("\a") 
+																	fmt.Print("\a") 
 																}
+
 															}else{
                                                  
 																fmt.Print("\a")
 															}
-													}else if len(matches)==1{
+													  }else if len(matches)==1{
 
 
 														  /*
@@ -310,9 +382,6 @@ func processRawInput() []rune{
 																 */
 
 																 
-
-																
-
 																 lastSlash:=findLastSlash(userInput)
                                                   
 																 if lastSlash>0{
@@ -333,9 +402,10 @@ func processRawInput() []rune{
 															
 															tab_count=0
 													}
-											case 2:
-													printMatches(matches)
-													tab_count=0
+
+													case 2:
+															printMatches(matches)
+															tab_count=0
 											}
              
                               
