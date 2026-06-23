@@ -39,7 +39,11 @@ func createRedirectFile(fileName string) *os.File{
 
 func isInbuilt(command string) bool{
 	    inbuilts:=map[string] bool{
-			"exit":true,"type":true,"echo":true,"pwd":true,
+			"exit":true,
+			"type":true,
+			"echo":true,
+			"pwd":true,
+			"complete":true,
 		}
 		return inbuilts[command]
 }
