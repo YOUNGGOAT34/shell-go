@@ -43,6 +43,7 @@ func isInbuilt(command string) bool{
 			"echo":true,
 			"pwd":true,
 			"complete":true,
+			"jobs":true,
 		}
 		return inbuilts[command]
 }
@@ -92,6 +93,8 @@ func execute(userInput []rune) bool{
 				case "complete":
 					  
 					  complete(args[1:])
+
+				case "jobs":
 
 				default:
 					if !runProgram(command,args[1:]){
