@@ -38,7 +38,7 @@ func findLastSlash(userInput []rune) int{
 func findLastSpace(userInput []rune) int{
 	   lastSpaceIndex:=-1
 	   for i,r :=range userInput{
-			   if r==' '{
+			   if r==' ' && i<len(userInput)-1{
 					 
 					 lastSpaceIndex=i
 				}
@@ -68,42 +68,23 @@ func processRawInput() []rune{
 		buffer:=make([]byte,3)
 
 		fmt.Print("$ ");
-
-		
-
 		tab_count:=0
        
 		for{
 
-			
-         
-			   
-
 			  _break:=false
 
 			  bytesRead,err:=os.Stdin.Read(buffer)
-
-           
-
 			  if err!=nil{
 				   if errors.Is(err,io.EOF){
 						  break
 					}
 				   panic(err)
 			  }
-
-
-			 
-
 			   if bytesRead>0{
 
 					i:=0
-
-					 
-
 					for i<bytesRead{
-
-						
 
 						char,size:=utf8.DecodeRune(buffer[i:bytesRead])
 	               i+=size
@@ -133,17 +114,23 @@ func processRawInput() []rune{
 										var searchInDir bool
 
 										if lastSpace != -1{
+
                                  inputToAutocomplete=userInput[lastSpace+1:]
 											searchInDir=true
+
 										}else{
 											 inputToAutocomplete=userInput
-											 searchInDir=false
+											 if userInput[len(userInput)-1]==' '{
+												    
+												    searchInDir=true
+											 }else{
+												  searchInDir=false
+											 }
+											 
 										}
 
-										
-
                               matches:=autocomplete(inputToAutocomplete,searchInDir)
-
+                              
 										switch tab_count {
 											
                                  case 1:
@@ -259,15 +246,18 @@ func processRawInput() []rune{
 																	 userInput=append(userInput[:lastSlash+1],matches[0]...)
 
 																 }else{
+																	  
 																	   userInput=append(userInput[:spaceIndex+1],matches[0]...)
 																 }
                                                  
-																
-                                                
 															}else{
-																userInput=matches[0]
-																
-																
+
+																if userInput[len(userInput)-1]==' '{
+                                                     userInput=append(userInput, matches[0]...)
+																}else{
+																	
+                                                   userInput=matches[0]
+																}
 															}
 															
 															tab_count=0

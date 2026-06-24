@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -35,6 +36,30 @@ func printMatches(matches [][]rune){
 
 
 
+func autcompletePrammableCompletion(currentInput []rune) [][]rune{
+   
+	   var matches [][]rune
+     
+		if path,exists:=completions[strings.TrimSpace(string(currentInput))];exists{
+			        
+			        output,err:=exec.Command(path).Output()
+
+					  if err==nil{
+                    
+									match:=[]rune(strings.TrimSpace(string(output)))
+
+									match=append(match, ' ')
+
+									matches=append(matches, match)
+									
+							 
+					  }
+		}
+		
+		return matches
+}
+
+
 
 
 /*
@@ -42,12 +67,16 @@ func printMatches(matches [][]rune){
 	if true ,it means search in the current directory or subdirectories else search in path and builtins
 */
 func autocomplete(currentInput []rune,searchInDir bool) ([][]rune){
+    
+	var matches[][] rune
 
+	 //autcomplete a programmable completion
+	
+	 matches=autcompletePrammableCompletion(currentInput)
 
-   
-
-	 var matches[][] rune
-
+	 if len(matches)>0{
+		 return matches
+	 }
 
 	 if searchInDir{
 
@@ -56,15 +85,24 @@ func autocomplete(currentInput []rune,searchInDir bool) ([][]rune){
 		     if lastSlash>0{
                 matches=searchInDirectory(currentInput[lastSlash+1:],string(currentInput[:lastSlash]))
 			  }else{
-				 
-				  matches=searchInDirectory(currentInput,".")
+				  /*
+				      If the user typed something like : du<space><tab>
+						This is the current input ,therefore we whave an empty prefix
+						This is what we want to pass to the search directory so that we return the first file/directory as our match
+				  */
+				  if currentInput[len(currentInput)-1]==' '{
+					  
+					    matches=searchInDirectory([]rune(""),".")
+				  }else{
+
+					  matches=searchInDirectory(currentInput,".")
+				  }
 			  }
 			  return matches
 			  
 	}
 
-   
-	 if len(currentInput)==0{
+	if len(currentInput)==0{
 		 return nil
 	 }
 
