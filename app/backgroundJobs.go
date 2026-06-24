@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 )
 
@@ -21,6 +22,10 @@ var jobs []Job
 
 func startBackGroundJob(command string,args []string) bool{
 	  cmd:=exec.Command(command,args...)
+
+	  cmd.Stdout=os.Stdout
+	  cmd.Stderr=os.Stderr
+
 	  err:=cmd.Start()
 
 
@@ -28,10 +33,13 @@ func startBackGroundJob(command string,args []string) bool{
 		 return false
 	  }
 
+	  
+
 	  Job:=Job{
 		     jobNumber:nextJobNumber,
 			  PID: cmd.Process.Pid,
 	  }
+
 
 	  jobs = append(jobs, Job)
 
