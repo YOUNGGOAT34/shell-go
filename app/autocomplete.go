@@ -36,24 +36,34 @@ func printMatches(matches [][]rune){
 
 
 
-func autcompletePrammableCompletion(currentInput []rune) [][]rune{
+
+func autcompletePrammableCompletion(userInput []rune) [][]rune{
    
 	   var matches [][]rune
      
-		if path,exists:=completions[strings.TrimSpace(string(currentInput))];exists{
+		command,currentWord,previousWord:=completionArgs(userInput)
+
+		
+
+		if path,exists:=completions[strings.TrimSpace(string(command))];exists{
 			        
-			        output,err:=exec.Command(path).Output()
-
+			        output,err:=exec.Command(path,command,currentWord,previousWord).Output()
+					
 					  if err==nil{
+
+						        if len(output)!=0{
+
+									  match:=[]rune(strings.TrimSpace(string(output)))
+	
+									  match=append(match, ' ')
+	
+									  matches=append(matches, match)
+								  }
                     
-									match:=[]rune(strings.TrimSpace(string(output)))
-
-									match=append(match, ' ')
-
-									matches=append(matches, match)
-									
-							 
+									 
 					  }
+
+					  
 		}
 		
 		return matches
@@ -66,13 +76,15 @@ func autcompletePrammableCompletion(currentInput []rune) [][]rune{
    SearchInDir is a flag to tell the program where it should search for matches
 	if true ,it means search in the current directory or subdirectories else search in path and builtins
 */
-func autocomplete(currentInput []rune,searchInDir bool) ([][]rune){
+func autocomplete(currentInput []rune,fullInput []rune,searchInDir bool) ([][]rune){
+
+
     
 	var matches[][] rune
-
+    
 	 //autcomplete a programmable completion
 	
-	 matches=autcompletePrammableCompletion(currentInput)
+	 matches=autcompletePrammableCompletion(fullInput)
 
 	 if len(matches)>0{
 		 return matches

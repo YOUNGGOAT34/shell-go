@@ -48,7 +48,6 @@ func findLastSpace(userInput []rune) int{
 
 
 
-
 func processRawInput() []rune{
 
 	   fd:=int(os.Stdin.Fd())
@@ -131,7 +130,12 @@ func processRawInput() []rune{
 											 
 										}
 
-                              matches:=autocomplete(inputToAutocomplete,searchInDir)
+										/*
+										  I wanna pass the full user input to the autocomplete function so that for programmable completion
+										  It will be used to form ,command,current word and previous word
+										*/
+
+                              matches:=autocomplete(inputToAutocomplete,userInput,searchInDir)
                               
 										switch tab_count {
 											
@@ -183,6 +187,8 @@ func processRawInput() []rune{
 
 																				if lastSlashIndex==0{
 
+																				
+
 																					if len(prefix)>len(userInput[spaceIndex+1:]){
 
                                                                       userInput=append(userInput[:spaceIndex+1],prefix... )
@@ -210,6 +216,7 @@ func processRawInput() []rune{
 																}
 
 															}else{
+															
                                                  
 																fmt.Print("\a")
 															}

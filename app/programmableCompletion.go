@@ -1,9 +1,54 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 
 var completions =make(map[string] string)
+
+
+func completionArgs(userInput []rune)(command,currentWord,previousWord string){
+
+	 words:=strings.Fields(string(userInput))
+
+	 endsWithSpace:=len(userInput)>0 && userInput[len(userInput)-1]==' '
+
+	 if len(words)==0{
+		  return "","",""
+	 }
+
+	 command=words[0]
+
+
+
+	 if len(words)==1{
+		  return command,"",""
+	 }
+
+
+	 if endsWithSpace{
+		  currentWord=""
+
+		  if len(words)>=2{
+			  previousWord=words[len(words)-1]
+		  }
+	 }else{
+		  
+		   currentWord=words[len(words)-1]
+
+			if len(words)>=3{
+				 previousWord=words[len(words)-2]
+			}
+	 }
+
+
+
+	 return command,currentWord,previousWord
+
+
+}
 
 
 func complete(args []string){
