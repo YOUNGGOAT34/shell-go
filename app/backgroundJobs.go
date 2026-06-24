@@ -70,8 +70,15 @@ func startBackGroundJob(command string,args []string) bool{
 }
 
 func showJobs(){
-	  for _,job:= range jobs{
+	  for index,job:= range jobs{
 
-		  fmt.Printf("[%d]+  %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
+        if index==len(jobs)-1{
+           fmt.Printf("[%d]+  %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
+		  }else if len(jobs)>=2 && index==len(jobs)-2{
+			  fmt.Printf("[%d]-  %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
+		  }else{
+
+			  fmt.Printf("[%d]   %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
+		  }
 	  }
 }
