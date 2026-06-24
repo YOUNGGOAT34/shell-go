@@ -14,7 +14,8 @@ import (
 
 
 func printMatches(matches [][]rune){
-	 
+
+
 	  if len(matches)<1{
 		 return
 	  }
@@ -54,21 +55,20 @@ func autcompletePrammableCompletion(userInput []rune) [][]rune{
 					)
 
 
-					output,err:=cmd.Output()
-
-				
-
-
-					  
-					
-					  if err==nil{
+					output,err:=cmd.Output()					  
+			
+					if err==nil{
 
 						        if len(output)!=0{
 
-									 lines:=strings.Split(string(output),"\n")
+									 lines:=strings.SplitSeq(string(output),"\n")
 
-									 for _,line:=range lines{
-										 
+									 for line:=range lines{
+
+										 if line==""{
+											  continue
+										 }
+
 										 match:=[]rune(strings.TrimSpace(string(line)))
 	  
 										 match=append(match, ' ')

@@ -37,9 +37,11 @@ func completionArgs(userInput []rune)(command,currentWord,previousWord string){
 	 }else{
 		  
 		   currentWord=words[len(words)-1]
-
+         
 			if len(words)>=3{
 				 previousWord=words[len(words)-2]
+			}else{
+				  previousWord=command
 			}
 	 }
 
