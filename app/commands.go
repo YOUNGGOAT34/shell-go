@@ -95,6 +95,7 @@ func execute(userInput []rune) bool{
 					  complete(args[1:])
 
 				case "jobs":
+					showJobs()
 
 				default:
 					if !runProgram(command,args[1:]){
@@ -168,7 +169,7 @@ func handleType(cmd string){
 func runProgram(command string,args []string) bool{
 
       if len(args)>=1 && args[len(args)-1]=="&"{
-			 return startBackGroundJob(command,args[:len(args)-1])
+			 return startBackGroundJob(command,args)
 		}
 	   
 		cmd:=exec.Command(command,args...)
