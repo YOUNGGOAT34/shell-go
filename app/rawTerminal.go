@@ -94,6 +94,8 @@ func processRawInput() []rune{
 									_break=true
 									
 								case 3:
+
+									 fmt.Printf("^C\r\n")
 									
 									_break=true
 									
@@ -252,27 +254,29 @@ func processRawInput() []rune{
                                                  
 															}else{
 
-																if userInput[len(userInput)-1]==' '{
-                                                     userInput=append(userInput, matches[0]...)
-																}else{
-																	
-                                                   userInput=matches[0]
+																			if userInput[len(userInput)-1]==' '{
+																				userInput=append(userInput, matches[0]...)
+																			}else{
+																				
+																				userInput=matches[0]
+																			}
+																		}
+																		
+																		tab_count=0
 																}
-															}
-															
-															tab_count=0
-													}
 
 													case 2:
 															printMatches(matches)
 															tab_count=0
 											}
-             
-                              
 
-								default:
-									tab_count=0
-									userInput=append(userInput,char)
+								          case 127:
+
+												userInput=userInput[:len(userInput)-1]
+
+											default:
+												tab_count=0
+												userInput=append(userInput,char)
 						}
 					}
 
@@ -282,9 +286,6 @@ func processRawInput() []rune{
 						 fmt.Print("\r\n")
 					    break
 				   }
-
-				 
-   
 				}
  
 		}
