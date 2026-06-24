@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -40,6 +41,9 @@ func printMatches(matches [][]rune){
 func autcompletePrammableCompletion(userInput []rune) [][]rune{
    
 	   var matches [][]rune
+
+		os.Setenv("COMP_LINE",string(userInput))
+		os.Setenv("COMP_POINT",strconv.Itoa(len(string(userInput))))
      
 		command,currentWord,previousWord:=completionArgs(userInput)
 
@@ -47,7 +51,17 @@ func autcompletePrammableCompletion(userInput []rune) [][]rune{
 
 		if path,exists:=completions[strings.TrimSpace(string(command))];exists{
 			        
-			        output,err:=exec.Command(path,command,currentWord,previousWord).Output()
+			        cmd:=exec.Command(path,command,currentWord,previousWord)
+
+					  cmd.Env=append(cmd.Env, 
+					    "COMP_LINE="+string(userInput),
+						 "COMP_POINT="+strconv.Itoa(len(string(userInput))),
+					)
+
+
+					output,err:=cmd.Output()
+
+					  
 					
 					  if err==nil{
 
