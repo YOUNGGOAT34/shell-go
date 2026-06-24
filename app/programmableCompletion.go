@@ -82,6 +82,20 @@ func complete(args []string){
 				registerCompletion(args[1],args[2])
 		}
 
+
+		if args[0]=="-r"{
+			   if len(args)<2{
+					   fmt.Println("flag -r expects one argument: registered specification i.e docker")
+				}
+
+				deleteCompletion(args[1])
+		}
+
+}
+
+
+func deleteCompletion(completionName string){
+	      delete (completions,completionName)
 }
 
 
