@@ -56,17 +56,26 @@ func autcompletePrammableCompletion(userInput []rune) [][]rune{
 
 					output,err:=cmd.Output()
 
+				
+
+
 					  
 					
 					  if err==nil{
 
 						        if len(output)!=0{
 
-									  match:=[]rune(strings.TrimSpace(string(output)))
-	
-									  match=append(match, ' ')
-	
-									  matches=append(matches, match)
+									 lines:=strings.Split(string(output),"\n")
+
+									 for _,line:=range lines{
+										 
+										 match:=[]rune(strings.TrimSpace(string(line)))
+	  
+										 match=append(match, ' ')
+	  
+										 matches=append(matches, match)
+									 }
+
 								  }
                     
 									 
