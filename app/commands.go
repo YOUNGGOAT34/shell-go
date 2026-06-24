@@ -166,9 +166,11 @@ func handleType(cmd string){
 }
 
 func runProgram(command string,args []string) bool{
-	  
-      
 
+      if len(args)>=1 && args[len(args)-1]=="&"{
+			 return startBackGroundJob(command,args[:len(args)-1])
+		}
+	   
 		cmd:=exec.Command(command,args...)
 
 		oldStdout:=os.Stdout
