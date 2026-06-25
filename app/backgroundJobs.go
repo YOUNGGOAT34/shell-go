@@ -67,14 +67,22 @@ func startBackGroundJob(command string,args []string) bool{
 
 	  jobs = append(jobs, Job)
 
-	  jobIndex:=len(jobs)-1
+	
 
 	  //This routine will update the job's status to done ,once the job is done running
 
-	  go func(){
+	  go func(jobNumber int){
           cmd.Wait()
-          jobs[jobIndex].status=Done
-	  }()
+         
+			 for i:=range jobs{
+				  if jobs[i].jobNumber==jobNumber{
+					   
+					  jobs[i].status=Done
+				  }
+			 }
+
+	  }(Job.jobNumber)
+
 	  nextJobNumber++
 
 	  fmt.Printf("[%d] %d\r\n",Job.jobNumber,Job.PID)
