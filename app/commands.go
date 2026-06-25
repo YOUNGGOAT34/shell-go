@@ -1,12 +1,13 @@
 package main
 
 import (
+	"slices"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
+	
 )
 
 
@@ -64,9 +65,7 @@ func execute(userInput []rune) bool{
 		switch command {
 				case "exit":
 					return false
-				case "echo":
-					
-					handleEcho(args[1:])
+				
 				case "type":
 					      if len(args)<2{
                             fmt.Printf("type expected an argument\n")
@@ -96,9 +95,9 @@ func execute(userInput []rune) bool{
 
 				case "jobs":
 					showJobs(false)
-
+          
 				default:
-					if !runProgram(command,args[1:]){
+					if !runProgram(args){
               
 						fmt.Printf("%s: command not found\n",command)
 					}
@@ -107,37 +106,6 @@ func execute(userInput []rune) bool{
 
 		return true
 
-}
-
-
-func handleEcho(args []string){
-       oldStdout:=os.Stdout
-		 oldStderr:=os.Stderr
-	    if redirect.stdout{
-			  file:=createRedirectFile(redirect.fileName)
-			  defer file.Close()
-			  
-			  os.Stdout=file
-			 
-		 }
-
-		  if redirect.stderr{
-			  file:=createRedirectFile(redirect.fileName)
-			  defer file.Close()
-			  
-			  os.Stderr=file
-			 
-		 }
-	 
-	    
-	    if len(args)>0{
-			 fmt.Println(strings.Join(args," "))
-		 }else{
-			 fmt.Println()
-		 }
-
-		  os.Stdout=oldStdout
-		  os.Stderr=oldStderr
 }
 
 
@@ -166,17 +134,32 @@ func handleType(cmd string){
 
 }
 
-func runProgram(command string,args []string) bool{
+
+
+func hasPipe(args []string) bool{
+	  return slices.Contains(args, "|")
+}
+
+
+
+func runProgram(args []string) bool{
 
       if len(args)>=1 && args[len(args)-1]=="&"{
-			 return startBackGroundJob(command,args)
+			 return startBackGroundJob(args)
+		}
+
+
+		if hasPipe(args){
+            
+			   return pipe(args);
+
 		}
 	   
-		cmd:=exec.Command(command,args...)
+		cmd:=exec.Command(args[0],args[1:]...)
 
 		oldStdout:=os.Stdout
 		oldStderr:=os.Stderr
-
+       
 		var file *os.File
 		if redirect.stdout || redirect.stderr {
          file=createRedirectFile(redirect.fileName)
@@ -235,4 +218,84 @@ func runProgram(command string,args []string) bool{
 
 
 		return true
+}
+
+
+
+
+/*
+
+For input such as:
+
+echo hello | grep h | wc
+
+Split the command line into pipeline stages.
+
+this produces:
+
+       [
+           {"echo", "hello"},
+           {"grep", "h"},
+           {"wc"},
+       ]
+
+   We keep track of the start index of the current stage and
+   append a new command whenever a pipe symbol ('|') is found.
+*/
+
+func pipe(input []string) bool{
+	   
+	   var args [][]string
+
+
+		startIndex:=0
+
+		for index,arg:=range input{
+			   if arg=="|"{
+					  args=append(args,input[startIndex:index])
+					  startIndex=index+1
+				}
+		}
+
+		args=append(args,input[startIndex:])
+
+		var cmds []exec.Cmd
+
+		for _,arguments :=range args{
+			  
+			  cmds=append(cmds,*exec.Command(arguments[0],arguments[1:]...)) 
+
+		}
+
+
+		for i:=0;i<len(cmds)-1;i++{
+			   pipe,err:=cmds[i].StdoutPipe()
+
+				if err!=nil{
+					 return false
+				}
+
+				cmds[i+1].Stdin=pipe
+		}
+
+
+		cmds[len(cmds)-1].Stdout=os.Stdout
+
+
+		for i:=range cmds{
+			  if err:=cmds[i].Start();err!=nil{
+				 return false
+			  }
+		}
+
+
+		for i:=range cmds{
+			  if err:=cmds[i].Wait();err!=nil{
+				 return false
+			  }
+		}
+
+
+		return true
+
 }

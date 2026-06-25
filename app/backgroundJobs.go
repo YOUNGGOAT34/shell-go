@@ -43,8 +43,8 @@ var nextJobNumber=1
 var freeJobNumbers []int
 var jobs []Job
 
-func startBackGroundJob(command string,args []string) bool{
-	  cmd:=exec.Command(command,args[:len(args)-1]...)
+func startBackGroundJob(args []string) bool{
+	  cmd:=exec.Command(args[0],args[1:len(args)-1]...)
 
 	  cmd.Stdout=os.Stdout
 	  cmd.Stderr=os.Stderr
@@ -54,7 +54,6 @@ func startBackGroundJob(command string,args []string) bool{
 	  if err!=nil{
 		 return false
 	  }
-
 
 
 	  var jobNumber int
@@ -79,7 +78,7 @@ func startBackGroundJob(command string,args []string) bool{
 		     jobNumber:jobNumber,
 			  PID: cmd.Process.Pid,
 			  status: Running,
-			  command:command+" "+strings.Join(args," "),
+			  command:strings.Join(args," "),
 	  }
 
 	 
