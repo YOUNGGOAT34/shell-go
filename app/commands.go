@@ -95,7 +95,7 @@ func execute(userInput []rune) bool{
 					  complete(args[1:])
 
 				case "jobs":
-					showJobs()
+					showJobs(false)
 
 				default:
 					if !runProgram(command,args[1:]){

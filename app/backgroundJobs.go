@@ -92,7 +92,21 @@ func startBackGroundJob(command string,args []string) bool{
 }
 
 
-func showJobs(){
+
+/*
+     reapBeforePrompt determines how completed jobs are handled.
+
+   false (jobs command):
+     - Display all jobs.
+     - Reap completed jobs after displaying them.
+
+   true (before prompt):
+     - Display only completed jobs.
+     - Reap them immediately.
+*/
+
+func showJobs(reapBeforePrompt bool){
+	
 	  for i:=0;i<len(jobs);{
         indicator:=" "
         if i==len(jobs)-1{
@@ -103,6 +117,11 @@ func showJobs(){
 
 		command:=jobs[i].command
 
+		if jobs[i].status==Running && reapBeforePrompt{
+			  i++
+			  continue
+		}
+
 		if jobs[i].status==Done{
 			 /*
 			    command is guaranteed to have a trailing & ,because only background jobs are stored in the jobs slice 
@@ -112,7 +131,9 @@ func showJobs(){
 			  
 		}
 
-		fmt.Printf("[%d]%s  %-24s %s\n",jobs[i].jobNumber,indicator,jobs[i].status.jobStatusToString(),command)
+
+
+		fmt.Printf("[%d]%s  %-24s %s\r\n",jobs[i].jobNumber,indicator,jobs[i].status.jobStatusToString(),command)
 
 		if jobs[i].status==Done{
 			  jobs=append(jobs[:i],jobs[i+1:]... )
@@ -123,3 +144,4 @@ func showJobs(){
 
 	  }
 }
+

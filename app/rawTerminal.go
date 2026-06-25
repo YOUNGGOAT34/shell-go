@@ -66,7 +66,13 @@ func processRawInput() []rune{
 
 		buffer:=make([]byte,3)
 
-		fmt.Print("$ ");
+
+	
+
+		showJobs(true)
+	
+		fmt.Print("$ ")
+		
 		tab_count:=0
        
 		for{
