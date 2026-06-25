@@ -40,6 +40,7 @@ func (status JobStatus) jobStatusToString() string{
 
 
 var nextJobNumber=1
+var freeJobNumbers []int
 var jobs []Job
 
 func startBackGroundJob(command string,args []string) bool{
@@ -54,9 +55,28 @@ func startBackGroundJob(command string,args []string) bool{
 		 return false
 	  }
 
+
+
+	  var jobNumber int
+
+	  if len(jobs)>0{
+
+		   if len(freeJobNumbers)>0{
+				 jobNumber=freeJobNumbers[0]
+				 freeJobNumbers=append(freeJobNumbers,freeJobNumbers[1:]... )
+			}else{
+				 jobNumber=nextJobNumber
+				 nextJobNumber++
+			}
+
+	  }else{
+		  jobNumber=nextJobNumber
+		  nextJobNumber++
+	  }
+
 	
 	  Job:=Job{
-		     jobNumber:nextJobNumber,
+		     jobNumber:jobNumber,
 			  PID: cmd.Process.Pid,
 			  status: Running,
 			  command:command+" "+strings.Join(args," "),
@@ -83,7 +103,7 @@ func startBackGroundJob(command string,args []string) bool{
 
 	  }(Job.jobNumber)
 
-	  nextJobNumber++
+	  
 
 	  fmt.Printf("[%d] %d\r\n",Job.jobNumber,Job.PID)
    
@@ -124,19 +144,25 @@ func showJobs(reapBeforePrompt bool){
 
 		if jobs[i].status==Done{
 			 /*
-			    command is guaranteed to have a trailing & ,because only background jobs are stored in the jobs slice 
-				 Therefore it is safe to access len(command)-1
-			 */
+				command is guaranteed to end with '&' because only
+				background jobs are stored in the jobs slice.
+				Therefore command[:len(command)-1] is safe.
+			*/
 			  command=command[:len(command)-1]
 			  
 		}
 
-
-
 		fmt.Printf("[%d]%s  %-24s %s\r\n",jobs[i].jobNumber,indicator,jobs[i].status.jobStatusToString(),command)
 
 		if jobs[i].status==Done{
-			  jobs=append(jobs[:i],jobs[i+1:]... )
+			 
+           
+			  freeJobNumbers=append(freeJobNumbers,jobs[i].jobNumber)
+			   jobs=append(jobs[:i],jobs[i+1:]... )
+
+			  if len(jobs)==0{
+				  nextJobNumber=1
+			  }
 			  
 		}else{
 			 i++
