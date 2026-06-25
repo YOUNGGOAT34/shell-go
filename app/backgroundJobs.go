@@ -15,12 +15,14 @@ type Job struct{
 		 PID int
 		 status JobStatus
 		 command string
+		
 }
 
 
 const(
      
 	   Running JobStatus=iota
+		Done
 
 )
 
@@ -29,6 +31,8 @@ func (status JobStatus) jobStatusToString() string{
 	    switch status{
 		 		case Running:
 						return "Running"
+				case Done:
+					   return "Done"
 				default:
 					  return "unknown"
 		 }
@@ -58,27 +62,56 @@ func startBackGroundJob(command string,args []string) bool{
 			  command:command+" "+strings.Join(args," "),
 	  }
 
+	 
+
 
 	  jobs = append(jobs, Job)
 
+	  jobIndex:=len(jobs)-1
+
+	  //This routine will update the job's status to done ,once the job is done running
+
+	  go func(){
+          cmd.Wait()
+          jobs[jobIndex].status=Done
+	  }()
 	  nextJobNumber++
 
 	  fmt.Printf("[%d] %d\r\n",Job.jobNumber,Job.PID)
-      
+   
     return true
 	    
 }
 
+
 func showJobs(){
-	  for index,job:= range jobs{
-
-        if index==len(jobs)-1{
-           fmt.Printf("[%d]+  %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
-		  }else if len(jobs)>=2 && index==len(jobs)-2{
-			  fmt.Printf("[%d]-  %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
-		  }else{
-
-			  fmt.Printf("[%d]   %-24s %s\n",job.jobNumber,job.status.jobStatusToString(),job.command)
+	  for i:=0;i<len(jobs);{
+        indicator:=" "
+        if i==len(jobs)-1{
+           indicator="+"
+		  }else if len(jobs)>=2 && i==len(jobs)-2{
+			   indicator="-"
 		  }
+
+		command:=jobs[i].command
+
+		if jobs[i].status==Done{
+			 /*
+			    command is guaranteed to have a trailing & ,because only background jobs are stored in the jobs slice 
+				 Therefore it is safe to access len(command)-1
+			 */
+			  command=command[:len(command)-1]
+			  
+		}
+
+		fmt.Printf("[%d]%s  %-24s %s\n",jobs[i].jobNumber,indicator,jobs[i].status.jobStatusToString(),command)
+
+		if jobs[i].status==Done{
+			  jobs=append(jobs[:i],jobs[i+1:]... )
+			  
+		}else{
+			 i++
+		}
+
 	  }
 }
